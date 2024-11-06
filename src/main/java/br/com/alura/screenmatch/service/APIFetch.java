@@ -8,20 +8,20 @@ import java.net.http.HttpResponse;
 
 public class APIFetch {
     public String getDatas(String address) {
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(address))
-				.build();
-		HttpResponse<String> response = null;
-		try {
-			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(address))
+                .build();
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-		String json = response.body();
-		return json;
-	}
+        String json = response.body();
+        return json;
+    }
 }
