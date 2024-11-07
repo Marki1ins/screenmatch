@@ -4,7 +4,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -73,5 +76,27 @@ public class Main {
                                                                 " - Episode: " + e.getEpisodeNumber() + " - "
                                                                 + e.getTitle() +
                                                                 " - Released: " + e.getReleased().format(formatter)));
+
+                System.out.println("Digite um trecho do título do episódio");
+                var episodeName = read.nextLine();
+                Optional<Episode> episode = episodesList.stream()
+                                .filter(e -> e.getTitle().toUpperCase().contains(episodeName.toUpperCase()))
+                                .findFirst();
+
+                if (episode.isPresent()) {
+                        System.out.println(episode.get());
+                } else {
+                        System.out.println("Nenhum episódio encontrado");
+                }
+
+                Map<Integer, Double> averageBySeason = episodesList.stream()
+                                .filter(e -> e.getImdbRating() < 0.0)
+                                .collect(Collectors.groupingBy(Episode::getSeason,
+                                                Collectors.averagingDouble(Episode::getImdbRating)));
+                System.out.println(averageBySeason);
+
+                DoubleSummaryStatistics est = episodesList.stream().filter(e -> e.getImdbRating() > 0.0)
+                                .collect(Collectors.summarizingDouble(Episode::getImdbRating));
+                System.out.println(est.getAverage());
         }
 }
