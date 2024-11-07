@@ -1,9 +1,15 @@
 package br.com.alura.screenmatch.Main;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+import br.com.alura.screenmatch.model.Episode;
+import br.com.alura.screenmatch.model.EpisodeData;
 import br.com.alura.screenmatch.model.SeasonData;
 import br.com.alura.screenmatch.model.ShowsData;
 import br.com.alura.screenmatch.service.APIFetch;
@@ -36,5 +42,30 @@ public class Main {
         season.forEach(System.out::println);
 
         season.forEach(t -> t.episodes().forEach(e -> System.out.println(e.title())));
+
+        List<EpisodeData> episodes = season.stream().flatMap(s -> s.episodes().stream()).collect(Collectors.toList());
+
+        episodes.stream().filter(e -> e.imdbRating() != null && !e.imdbRating().contains("N/A"))
+                .sorted(Comparator.comparing(EpisodeData::imdbRating).reversed())
+                .limit(5)
+                .forEach(System.out::println);
+
+        List<Episode> episodesList = season.stream()
+                .flatMap(s -> s.episodes().stream().map(e -> new Episode(s.season(), e))).collect(Collectors.toList());
+
+        episodesList.forEach(System.out::println);
+
+        System.out.println("A partir de que ano você deseja ver os episódios?");
+        var year = read.nextInt();
+        read.nextLine();
+
+        LocalDate dateSearch = LocalDate.of(year, 1, 1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        episodesList.stream().filter(e -> e.getReleased() != null && e.getReleased().isAfter(dateSearch))
+                .forEach(e -> System.out.println(
+                        "Season: " + e.getSeason() +
+                                " - Episode: " + e.getEpisodeNumber() + " - " + e.getTitle() +
+                                " - Released: " + e.getReleased().format(formatter)));
     }
 }
