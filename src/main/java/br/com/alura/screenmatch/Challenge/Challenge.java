@@ -71,5 +71,7 @@ public class Challenge {
         }
 
         System.out.println("\nTods os veículos filtrados com avaliações por ano: ");
+
+        vehicles.stream().sorted(Comparator.comparing(Vehicle::anoModelo)).forEach(System.out::println);
     }
 }
